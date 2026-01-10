@@ -136,6 +136,8 @@ Start the backend server:
 npm start
 ```
 
+> **Note:** On first run, change `server.js` line 26 to `sync({ force: true })` to create fresh tables. After that, switch back to `sync({ alter: true })` to preserve data.
+
 ### 3. Frontend Setup
 
 ```bash
