@@ -12,6 +12,7 @@ node_modules/
 .DS_Store
 dist/
 build/
+.sql
 
 # Chặn folder chứa log
 logs/
