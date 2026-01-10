@@ -1,0 +1,19 @@
+# Chặn folder thư viện nặng
+node_modules/
+/backend/node_modules/
+/frontend/node_modules/
+
+# Chặn file env
+.env
+/backend/.env
+/frontend/.env
+
+# Chặn file database
+.DS_Store
+dist/
+build/
+
+# Chặn folder chứa log
+logs/
+/backend/logs/
+/frontend/logs/
