@@ -3,7 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { getCourseById } from "../services/courseService";
 
 const CourseDetailPage = () => {
-  const { id } = useParams(); // Lấy ID từ URL (ví dụ /course/1 -> id = 1)
+  const { id } = useParams(); // Get ID from URL (e.g. /course/1 -> id = 1)
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -16,17 +16,15 @@ const CourseDetailPage = () => {
     fetchDetail();
   }, [id]);
 
-  if (loading) return <div className="text-center mt-5">Đang tải...</div>;
+  if (loading) return <div className="text-center mt-5">Loading...</div>;
   if (!course)
     return (
-      <div className="text-center mt-5 text-danger">
-        Không tìm thấy khóa học!
-      </div>
+      <div className="text-center mt-5 text-danger">Course not found!</div>
     );
 
   return (
     <div className="container mt-4">
-      {/* Phần Header Khóa học */}
+      {/* Course Header */}
       <div className="row">
         <div className="col-md-8">
           <h1 className="fw-bold">{course.title}</h1>
@@ -41,13 +39,13 @@ const CourseDetailPage = () => {
               style={{ width: "50px", height: "50px" }}
             />
             <div>
-              <strong>Giảng viên: {course.teacher?.full_name}</strong>
+              <strong>Teacher: {course.teacher?.full_name}</strong>
               <div className="text-muted small">{course.teacher?.bio}</div>
             </div>
           </div>
         </div>
 
-        {/* Phần Cột bên phải (Giá & Nút Mua) */}
+        {/* Right column (Price & Buy button) */}
         <div className="col-md-4">
           <div className="card shadow-sm">
             <img
@@ -58,26 +56,26 @@ const CourseDetailPage = () => {
             <div className="card-body">
               <h3 className="text-primary fw-bold text-center">
                 {course.price === 0 || course.price === "0.00"
-                  ? "Miễn phí"
-                  : parseInt(course.price).toLocaleString() + " đ"}
+                  ? "Free"
+                  : parseInt(course.price).toLocaleString() + " $"}
               </h3>
               <button className="btn btn-primary w-100 btn-lg mt-3">
-                Đăng ký học ngay
+                Register now
               </button>
               <ul className="list-group list-group-flush mt-3">
-                <li className="list-group-item">🎯 Trình độ: {course.level}</li>
+                <li className="list-group-item">Level: {course.level}</li>
                 <li className="list-group-item">
-                  📚 Tổng số chương: {course.chapters?.length || 0}
+                  Total chapters: {course.chapters?.length || 0}
                 </li>
               </ul>
             </div>
           </div>
         </div>
       </div>
-      {/* Phần Danh sách bài học (Curriculum) */}
+      {/* Curriculum */}
       <div className="row mt-5">
         <div className="col-md-8">
-          <h3 className="mb-3">Nội dung khóa học</h3>
+          <h3 className="mb-3">Course content</h3>
           <div className="accordion" id="accordionChapters">
             {course.chapters &&
               course.chapters.map((chapter, index) => (
@@ -116,7 +114,8 @@ const CourseDetailPage = () => {
                                 {lesson.title}
                               </span>
                               <span className="badge bg-secondary rounded-pill">
-                                {Math.floor(lesson.duration_seconds / 60)} phút
+                                {Math.floor(lesson.duration_seconds / 60)}{" "}
+                                minutes
                               </span>
                             </li>
                           ))}
@@ -128,7 +127,7 @@ const CourseDetailPage = () => {
           </div>
         </div>
       </div>
-      <div className="mb-5"></div> {/* Khoảng trắng dưới cùng */}
+      <div className="mb-5"></div> {/* Bottom margin */}
     </div>
   );
 };

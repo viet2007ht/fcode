@@ -7,7 +7,7 @@ export const getAllCourses = async () => {
     const response = await axios.get(API_URL);
     return response.data;
   } catch (error) {
-    console.error("Error when getting all courses:", error);
+    console.error("Error when getting all courses:", error.message);
     return [];
   }
 };
@@ -17,7 +17,7 @@ export const getCourseById = async (id) => {
     const response = await axios.get(`${API_URL}/${id}`);
     return response.data;
   } catch (error) {
-    console.error("Lỗi lấy chi tiết khóa học:", error);
+    console.error("Error when getting course detail:", error);
     return null;
   }
 };

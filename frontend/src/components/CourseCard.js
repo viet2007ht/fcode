@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const CourseCard = ({ course }) => {
-  // Nếu không có ảnh thì dùng ảnh mặc định
+  // If no image, use default image
   const defaultImg = "https://files.fullstack.edu.vn/f8-prod/courses/13/13.png";
 
   return (
@@ -29,14 +29,14 @@ const CourseCard = ({ course }) => {
               </span>
               <span className="fw-bold text-primary">
                 {course.price === 0 || course.price === "0.00"
-                  ? "Miễn phí"
-                  : parseInt(course.price).toLocaleString() + " đ"}
+                  ? "Free"
+                  : parseInt(course.price).toLocaleString() + " $"}
               </span>
             </div>
 
             <div className="d-flex align-items-center mb-3">
               <small className="text-muted">
-                GV: {course.teacher ? course.teacher.full_name : "Admin"}
+                Teacher: {course.teacher ? course.teacher.full_name : "Admin"}
               </small>
             </div>
 
@@ -44,7 +44,7 @@ const CourseCard = ({ course }) => {
               to={`/course/${course.course_id}`}
               className="btn btn-outline-primary w-100"
             >
-              Xem chi tiết
+              View details
             </Link>
           </div>
         </div>
