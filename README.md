@@ -63,17 +63,17 @@
 ```
 fcode/
 ├── backend/
-│   ├── server.js
+│   ├── server.js                 # Entry point
 │   ├── package.json
 │   └── src/
 │       ├── config/
-│       │   └── connectDB.js
+│       │   └── connectDB.js      # Sequelize database connection
 │       ├── controllers/
-│       │   ├── authController.js
-│       │   ├── courseController.js
-│       │   └── chatController.js
+│       │   ├── authController.js     # Login, Register logic
+│       │   ├── courseController.js   # CRUD courses, enroll
+│       │   └── chatController.js     # Get chat history
 │       ├── middlewares/
-│       │   └── authMiddleware.js
+│       │   └── authMiddleware.js     # JWT token verification
 │       ├── models/
 │       │   ├── User.js
 │       │   ├── Course.js
@@ -86,9 +86,9 @@ fcode/
 │       │   ├── Message.js
 │       │   └── index.js
 │       └── routes/
-│           ├── auth.js
-│           ├── course.js
-│           └── chat.js
+│           ├── auth.js           # /api/auth/*
+│           ├── course.js         # /api/courses/*
+│           └── chat.js           # /api/chat/*
 │
 ├── frontend/
 │   ├── package.json
@@ -104,8 +104,8 @@ fcode/
 │       │   ├── HomePage.js
 │       │   └── CourseDetailPage.js
 │       └── services/
-│           ├── authService.js
-│           └── courseService.js
+│           ├── authService.js    # Auth API calls
+│           └── courseService.js  # Course API calls
 │
 └── README.md
 ```
