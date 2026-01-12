@@ -107,8 +107,6 @@ fcode/
 │           ├── authService.js
 │           └── courseService.js
 │
-├── fcode_db.sql
-├── seed_data_sample.sql
 └── README.md
 ```
 
