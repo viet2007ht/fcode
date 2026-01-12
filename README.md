@@ -1,4 +1,4 @@
-# 🎓 F-Code Learning Platform
+# F-Code Learning Platform
 
 > A modern online learning platform built with React and Node.js
 
@@ -6,17 +6,18 @@
 ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
 ![MySQL](https://img.shields.io/badge/MySQL-005C84?style=for-the-badge&logo=mysql&logoColor=white)
 ![Express](https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white)
+![Socket.io](https://img.shields.io/badge/Socket.io-010101?style=for-the-badge&logo=socketdotio&logoColor=white)
 
 ---
 
 ## Table of Contents
 
-- [Features](#-features)
-- [Tech Stack](#-tech-stack)
-- [Project Structure](#-project-structure)
-- [Installation](#-installation)
-- [Database Schema](#-database-schema)
-- [API Endpoints](#-api-endpoints)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [Installation](#installation)
+- [Database Schema](#database-schema)
+- [API Endpoints](#api-endpoints)
 
 ---
 
@@ -31,7 +32,7 @@
 | **Video Lessons**      | Support video, document, and quiz content  |
 | **Progress Tracking**  | Track lesson completion and watch time     |
 | **Reviews & Ratings**  | Rate and review courses                    |
-| **Messaging**          | Direct messaging between users             |
+| **Real-time Chat**     | Live messaging with Socket.io              |
 
 ---
 
@@ -45,6 +46,7 @@
 - **Database:** MySQL
 - **Authentication:** JWT (jsonwebtoken)
 - **Password Hashing:** bcryptjs
+- **Real-time:** Socket.io
 
 ### Frontend
 
@@ -52,6 +54,7 @@
 - **Routing:** React Router DOM
 - **UI Framework:** Bootstrap 5
 - **HTTP Client:** Axios
+- **Real-time:** Socket.io-client
 
 ---
 
@@ -60,13 +63,17 @@
 ```
 fcode/
 ├── backend/
-│   ├── server.js              # Entry point
+│   ├── server.js
 │   ├── package.json
 │   └── src/
 │       ├── config/
-│       │   └── connectDB.js   # Database connection
+│       │   └── connectDB.js
 │       ├── controllers/
-│       │   └── authController.js
+│       │   ├── authController.js
+│       │   ├── courseController.js
+│       │   └── chatController.js
+│       ├── middlewares/
+│       │   └── authMiddleware.js
 │       ├── models/
 │       │   ├── User.js
 │       │   ├── Course.js
@@ -77,21 +84,31 @@ fcode/
 │       │   ├── LessonProgress.js
 │       │   ├── Review.js
 │       │   ├── Message.js
-│       │   └── index.js       # Model relationships
+│       │   └── index.js
 │       └── routes/
-│           └── auth.js
+│           ├── auth.js
+│           ├── course.js
+│           └── chat.js
 │
 ├── frontend/
 │   ├── package.json
 │   ├── public/
 │   └── src/
 │       ├── App.js
+│       ├── components/
+│       │   ├── CourseCard.js
+│       │   └── ChatBox.js
 │       ├── pages/
 │       │   ├── LoginPage.js
-│       │   └── RegisterPage.js
+│       │   ├── RegisterPage.js
+│       │   ├── HomePage.js
+│       │   └── CourseDetailPage.js
 │       └── services/
-│           └── authService.js
+│           ├── authService.js
+│           └── courseService.js
 │
+├── fcode_db.sql
+├── seed_data_sample.sql
 └── README.md
 ```
 
@@ -136,7 +153,7 @@ Start the backend server:
 npm start
 ```
 
-> **Note:** On first run, change `server.js` line 26 to `sync({ force: true })` to create fresh tables. After that, switch back to `sync({ alter: true })` to preserve data.
+> **Note:** On first run, change `server.js` to `sync({ force: true })` to create fresh tables. After that, switch back to `sync({ alter: true })` to preserve data.
 
 ### 3. Frontend Setup
 
@@ -147,6 +164,10 @@ npm start
 ```
 
 The app will be available at `http://localhost:3000`
+
+### 4. Seed Sample Data (Optional)
+
+Run `seed_data_sample.sql` in MySQL Workbench to populate sample data.
 
 ---
 
@@ -166,36 +187,47 @@ The app will be available at `http://localhost:3000`
 │ role        │  │                     └────│ thumbnail   │  │
 │ bio         │  │                          │ price       │  │
 └─────────────┘  │                          │ level       │  │
-                 │                          └─────────────┘  │
-                 │                                 │         │
-                 │    ┌─────────────┐              │         │
-                 │    │  Chapters   │◄─────────────┘         │
-                 │    ├─────────────┤                        │
-                 │    │ chapter_id  │                        │
-                 │    │ course_id   │                        │
-                 │    │ title       │                        │
-                 │    │ order_index │                        │
-                 │    └─────────────┘                        │
-                 │           │                               │
-                 │           ▼                               │
-                 │    ┌─────────────┐                        │
-                 │    │   Lessons   │                        │
-                 │    ├─────────────┤                        │
-                 │    │ lesson_id   │                        │
-                 │    │ chapter_id  │                        │
-                 │    │ title       │                        │
-                 │    │ content_type│                        │
-                 │    │ video_url   │                        │
-                 │    └─────────────┘                        │
-                 │           │                               │
-                 ▼           ▼                               │
-         ┌───────────────────────────┐                       │
-         │     LessonProgress        │                       │
-         ├───────────────────────────┤                       │
-         │ user_id ──────────────────┼───────────────────────┘
-         │ lesson_id                 │
-         │ is_completed              │
-         │ last_watched_second       │
+      │          │                          └─────────────┘  │
+      │          │                                 │         │
+      │          │    ┌─────────────┐              │         │
+      │          │    │  Chapters   │◄─────────────┘         │
+      │          │    ├─────────────┤                        │
+      │          │    │ chapter_id  │                        │
+      │          │    │ course_id   │                        │
+      │          │    │ title       │                        │
+      │          │    │ order_index │                        │
+      │          │    └─────────────┘                        │
+      │          │           │                               │
+      │          │           ▼                               │
+      │          │    ┌─────────────┐                        │
+      │          │    │   Lessons   │                        │
+      │          │    ├─────────────┤                        │
+      │          │    │ lesson_id   │                        │
+      │          │    │ chapter_id  │                        │
+      │          │    │ title       │                        │
+      │          │    │ content_type│                        │
+      │          │    │ video_url   │                        │
+      │          │    └─────────────┘                        │
+      │          │           │                               │
+      │          ▼           ▼                               │
+      │  ┌───────────────────────────┐                       │
+      │  │     LessonProgress        │                       │
+      │  ├───────────────────────────┤                       │
+      │  │ user_id ──────────────────┼───────────────────────┘
+      │  │ lesson_id                 │
+      │  │ is_completed              │
+      │  │ last_watched_second       │
+      │  └───────────────────────────┘
+      │
+      │  ┌───────────────────────────┐
+      └─►│        Messages           │
+         ├───────────────────────────┤
+         │ message_id                │
+         │ sender_id (FK → Users)    │
+         │ receiver_id (FK → Users)  │
+         │ content                   │
+         │ is_read                   │
+         │ created_at                │
          └───────────────────────────┘
 ```
 
@@ -211,12 +243,12 @@ The app will be available at `http://localhost:3000`
 | `Enrollments`    | Student course enrollments                 |
 | `LessonProgress` | Track user progress per lesson             |
 | `Reviews`        | Course ratings and reviews                 |
-| `Messages`       | Direct messages between users              |
+| `Messages`       | Real-time chat messages                    |
 
 ### SQL Schema
 
 <details>
-<summary> Click to expand full SQL schema</summary>
+<summary>Click to expand full SQL schema</summary>
 
 ```sql
 -- 1. USERS TABLE
@@ -338,41 +370,27 @@ CREATE TABLE Messages (
 | `POST` | `/api/auth/register` | Register new user       |
 | `POST` | `/api/auth/login`    | Login and get JWT token |
 
-#### Register Request
+### Courses
 
-```json
-{
-  "full_name": "John Doe",
-  "email": "john@example.com",
-  "password": "123456",
-  "role": "student"
-}
-```
+| Method | Endpoint              | Description        |
+| ------ | --------------------- | ------------------ |
+| `GET`  | `/api/courses`        | Get all courses    |
+| `GET`  | `/api/courses/:id`    | Get course by ID   |
+| `POST` | `/api/courses`        | Create new course  |
+| `POST` | `/api/courses/enroll` | Enroll in a course |
 
-#### Login Request
+### Chat
 
-```json
-{
-  "email": "john@example.com",
-  "password": "123456"
-}
-```
+| Method | Endpoint    | Description      |
+| ------ | ----------- | ---------------- |
+| `GET`  | `/api/chat` | Get chat history |
 
-#### Login Response
+### Socket.io Events
 
-```json
-{
-  "message": "Login successfully",
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "user": {
-    "id": 1,
-    "full_name": "John Doe",
-    "email": "john@example.com",
-    "role": "student",
-    "avatar": null
-  }
-}
-```
+| Event             | Direction       | Description          |
+| ----------------- | --------------- | -------------------- |
+| `send_message`    | Client → Server | Send a chat message  |
+| `receive_message` | Server → Client | Receive chat message |
 
 ---
 
